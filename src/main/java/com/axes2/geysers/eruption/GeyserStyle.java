@@ -55,7 +55,7 @@ public record GeyserStyle(
                 0.6f,   // columnRadius
                 0.5f,   // taper
                 0.5f,   // burstiness
-                0.5f,   // sprayWeight
+                0.9f,   // sprayWeight (thick water fountain by default)
                 0.5f,   // steamWeight
                 0.5f,   // mistWeight
                 0xFFBFD8E6, // waterTint (ARGB, pale blue)

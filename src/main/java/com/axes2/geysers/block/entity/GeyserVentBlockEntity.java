@@ -110,6 +110,15 @@ public class GeyserVentBlockEntity extends BlockEntity {
         double density = GeysersClientConfig.densityMultiplier();
         int budget = GeysersClientConfig.maxParticlesPerVentPerTick();
 
+        // Water first, so the thick fountain keeps its droplets even under a low cap.
+        if (phase == GeyserPhase.SURGE || phase == GeyserPhase.FULL
+                || phase == GeyserPhase.DECLINE || phase == GeyserPhase.STEAM) {
+            int sprayCount = (int) Math.ceil(intensity * 18.0 * style.sprayWeight() * density);
+            for (int k = 0; k < sprayCount && budget > 0; k++, budget--) {
+                spawnSpray(level, pos, random, style, intensity);
+            }
+        }
+
         int steamCount = (int) Math.ceil(intensity * 3.0 * style.steamWeight() * density);
         for (int k = 0; k < steamCount && budget > 0; k++, budget--) {
             spawnSteam(level, pos, random, intensity);
@@ -124,14 +133,6 @@ public class GeyserVentBlockEntity extends BlockEntity {
             int bubbleCount = (int) Math.ceil(intensity * 4.0 * density);
             for (int k = 0; k < bubbleCount && budget > 0; k++, budget--) {
                 spawnBubble(level, pos, random, style);
-            }
-        }
-
-        if (phase == GeyserPhase.SURGE || phase == GeyserPhase.FULL
-                || phase == GeyserPhase.DECLINE || phase == GeyserPhase.STEAM) {
-            int sprayCount = (int) Math.ceil(intensity * 6.0 * style.sprayWeight() * density);
-            for (int k = 0; k < sprayCount && budget > 0; k++, budget--) {
-                spawnSpray(level, pos, random, style, intensity);
             }
         }
     }
@@ -161,14 +162,21 @@ public class GeyserVentBlockEntity extends BlockEntity {
 
     private void spawnSpray(Level level, BlockPos pos, RandomSource random, GeyserStyle style, float intensity) {
         double radius = style.columnRadius();
-        double x = pos.getX() + 0.5 + spread(random, (float) radius);
+        double ox = spread(random, (float) radius);
+        double oz = spread(random, (float) radius);
+        double x = pos.getX() + 0.5 + ox;
         double y = pos.getY() + 1.0;
-        double z = pos.getZ() + 0.5 + spread(random, (float) radius);
-        double heightScale = style.maxColumnHeight() / 8.0;
-        double dy = (0.35 + 0.85 * intensity) * heightScale;
-        double lateral = 0.12 * style.burstiness();
-        level.addParticle(ModParticles.SPRAY.get(), x, y, z,
-                spread(random, (float) lateral), dy, spread(random, (float) lateral));
+        double z = pos.getZ() + 0.5 + oz;
+        // With gravity 1.0 the apex height is dy^2 / 0.08 blocks, so dy ~= sqrt(0.08 * H)
+        // launches a droplet to ~H blocks. Vary it so the jet has a tall core and shorter
+        // outliers — a fountain, not a single stream.
+        double targetHeight = style.maxColumnHeight() * (0.55 + 0.45 * intensity);
+        double dy = Math.sqrt(0.08 * targetHeight) * (0.85 + random.nextFloat() * 0.35);
+        // Slight outward fan (droplets land in a ring) plus jitter, scaled by burstiness.
+        double fan = 0.30 * style.burstiness();
+        double dx = ox * fan + spread(random, (float) (0.04 + 0.10 * style.burstiness()));
+        double dz = oz * fan + spread(random, (float) (0.04 + 0.10 * style.burstiness()));
+        level.addParticle(ModParticles.SPRAY.get(), x, y, z, dx, dy, dz);
     }
 
     /** Symmetric jitter in [-amount, amount]. */

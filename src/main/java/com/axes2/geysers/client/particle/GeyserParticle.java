@@ -15,11 +15,15 @@ import net.minecraft.core.particles.SimpleParticleType;
  */
 public class GeyserParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
+    private final boolean fadeOut;
+    private final float baseAlpha;
 
     protected GeyserParticle(ClientLevel level, double x, double y, double z,
                              double dx, double dy, double dz, SpriteSet sprites, Settings settings) {
         super(level, x, y, z);
         this.sprites = sprites;
+        this.fadeOut = settings.fadeOut();
+        this.baseAlpha = settings.alpha();
         this.xd = dx;
         this.yd = dy;
         this.zd = dz;
@@ -45,16 +49,20 @@ public class GeyserParticle extends TextureSheetParticle {
     public void tick() {
         super.tick();
         this.setSpriteFromAge(sprites);
-        // Ease opacity out over the back half of life so particles dissolve rather than pop.
-        float lifeFrac = (float) this.age / (float) this.lifetime;
-        if (lifeFrac > 0.5f) {
-            this.alpha = Math.max(0f, this.alpha * (1f - (lifeFrac - 0.5f) / 0.5f));
+        // Steam/mist/bubble dissolve over the back half of life; water (fadeOut=false)
+        // stays solid and simply lands/expires so the fountain reads as droplets.
+        if (fadeOut) {
+            float lifeFrac = (float) this.age / (float) this.lifetime;
+            if (lifeFrac > 0.5f) {
+                this.alpha = Math.max(0f, this.baseAlpha * (1f - (lifeFrac - 0.5f) / 0.5f));
+            }
         }
     }
 
     /** Per-kind behaviour bundle. Colors are 0xRRGGBB. */
     public record Settings(float gravity, float friction, boolean hasPhysics,
-                           int lifetime, int lifetimeJitter, float size, int tint, float alpha) {}
+                           int lifetime, int lifetimeJitter, float size, int tint, float alpha,
+                           boolean fadeOut) {}
 
     public static class Provider implements ParticleProvider<SimpleParticleType> {
         private final SpriteSet sprites;

@@ -22,15 +22,18 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 @EventBusSubscriber(modid = Geysers.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
 public class GeysersClient {
 
-    // --- per-kind particle look (tuning knobs; ARGB tint expressed as 0xRRGGBB) ---
+    // --- per-kind particle look (tuning knobs; tint expressed as 0xRRGGBB) ---
+    // Settings(gravity, friction, hasPhysics, lifetime, lifetimeJitter, size, tint, alpha, fadeOut)
     private static final GeyserParticle.Settings STEAM =
-            new GeyserParticle.Settings(-0.02f, 0.96f, false, 40, 30, 0.55f, 0xEFEFEF, 0.60f);
+            new GeyserParticle.Settings(-0.02f, 0.96f, false, 40, 30, 0.55f, 0xEFEFEF, 0.60f, true);
     private static final GeyserParticle.Settings MIST =
-            new GeyserParticle.Settings(-0.005f, 0.98f, false, 60, 40, 0.90f, 0xF0F4F8, 0.32f);
+            new GeyserParticle.Settings(-0.005f, 0.98f, false, 60, 40, 0.90f, 0xF0F4F8, 0.32f, true);
+    // Water: full Minecraft gravity so droplets arc and fall, hasPhysics so they land,
+    // long-lived enough to survive the flight, opaque (no fade) so the jet reads as water.
     private static final GeyserParticle.Settings SPRAY =
-            new GeyserParticle.Settings(0.06f, 0.99f, true, 30, 20, 0.20f, 0xBFD8E6, 0.90f);
+            new GeyserParticle.Settings(1.0f, 0.98f, true, 50, 30, 0.28f, 0xBFD8E6, 1.0f, false);
     private static final GeyserParticle.Settings BUBBLE =
-            new GeyserParticle.Settings(-0.03f, 0.95f, false, 20, 10, 0.15f, 0xCFE6F2, 0.80f);
+            new GeyserParticle.Settings(-0.03f, 0.95f, false, 20, 10, 0.15f, 0xCFE6F2, 0.80f, true);
 
     public GeysersClient(ModContainer container) {
         container.registerConfig(ModConfig.Type.CLIENT, GeysersClientConfig.SPEC);
