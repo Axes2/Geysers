@@ -1,0 +1,5 @@
+{
+  "variants": {
+    "": { "model": "geysers:block/geyser_vent" }
+  }
+}

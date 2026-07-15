@@ -1,2 +1,5 @@
 {
+  "block.geysers.geyser_vent": "Geyser Vent",
+  "item.geysers.geyser_vent": "Geyser Vent",
+  "itemGroup.geysers": "Geysers"
 }

@@ -6,6 +6,7 @@ import com.mojang.logging.LogUtils;
 
 import com.axes2.geysers.registry.ModBlockEntities;
 import com.axes2.geysers.registry.ModBlocks;
+import com.axes2.geysers.registry.ModCreativeTabs;
 import com.axes2.geysers.registry.ModItems;
 import com.axes2.geysers.registry.ModParticles;
 import com.axes2.geysers.registry.ModSounds;
@@ -28,6 +29,7 @@ public class Geysers {
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+        ModCreativeTabs.register(modEventBus);
         ModParticles.register(modEventBus);
         ModSounds.register(modEventBus);
 

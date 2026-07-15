@@ -2,14 +2,20 @@ package com.axes2.geysers.registry;
 
 import com.axes2.geysers.Geysers;
 
+import net.minecraft.world.item.BlockItem;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 /**
- * Item registry. The vent block item and the debug "Geyser Wand" are added in M1/M8.
+ * Item registry. The debug "Geyser Wand" is added in M8.
  */
 public final class ModItems {
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(Geysers.MODID);
+
+    /** BlockItem for placing the vent in creative. */
+    public static final DeferredItem<BlockItem> GEYSER_VENT_ITEM =
+            ITEMS.registerSimpleBlockItem("geyser_vent", ModBlocks.GEYSER_VENT);
 
     private ModItems() {}
 
