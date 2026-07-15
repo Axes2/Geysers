@@ -30,7 +30,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
  * summoned into motion and tuned by hand. Operates on the nearest vent to the command
  * source (within {@link #SEARCH_RADIUS} blocks).
  */
-@EventBusSubscriber(modid = Geysers.MODID)
+@EventBusSubscriber(modid = Geysers.MODID, bus = EventBusSubscriber.Bus.GAME)
 public final class GeyserCommands {
     private static final int SEARCH_RADIUS = 8;
 

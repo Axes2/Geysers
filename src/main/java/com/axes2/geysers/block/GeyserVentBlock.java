@@ -36,7 +36,8 @@ public class GeyserVentBlock extends Block implements EntityBlock {
             return null;
         }
         if (level.isClientSide) {
-            return null; // client ticker (particles) added in M2
+            return (lvl, pos, blockState, blockEntity) ->
+                    ((GeyserVentBlockEntity) blockEntity).clientTick(lvl, pos, blockState);
         }
         return (lvl, pos, blockState, blockEntity) ->
                 ((GeyserVentBlockEntity) blockEntity).serverTick(lvl, pos, blockState);
